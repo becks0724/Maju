@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- release 빌드에만 — 평문 HTTP 를 전부 막는 network security config 를 건다(계약 §2: 운영 중계는 HTTPS 만) -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:networkSecurityConfig="@xml/network_security_config_release" />
+</manifest>

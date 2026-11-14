@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 운전자 무응답 확인(가칭) 휴대폰 앱 매니페스트 — 권한 · 포그라운드 서비스(위치) · Data Layer 수신 · 119신고 앱 조회 · 자동 백업 제외 -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- normal -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- normal — 켜 둔 감시를 재부팅 뒤 다시 켠다(ResumeReceiver). 앱 업데이트(MY_PACKAGE_REPLACED)는 권한이 필요 없다 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- normal(Android 13 이하) · Android 14 부터는 특수 앱 접근 — 잠금 화면 위 전체 화면 경보(P10 · P11 · P12) -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <!-- normal · 사용자가 설정에서 허용하는 접근 — 방해 금지 중에도 알람 음량을 올린다(켜기를 막지 않음) -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <!-- dangerous(런타임) — 위치는 감시가 켜져 있는 동안 포그라운드 서비스에서만 쓴다 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- dangerous(런타임) · 「항상 허용」 — 부팅 · 업데이트로 백그라운드에서 되살아난 감시도 위치를 받게 한다(실측 11-13). 앞쪽 위치 허용 뒤 따로 묻고, 켜기를 막지 않는다 -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <!-- dangerous(런타임) · Play 제한 권한 — 보호자 문자 전용. 119 는 ACTION_SENDTO 작성 화면만(G4) -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <!-- dangerous(런타임, Android 13 이상) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+
+    <!-- 소방청 「119신고」 앱 실행 연결(패키지 가시성) · 문자 작성 화면 -->
+    <queries>
+        <package android:name="com.winitech.mm119t" />
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="smsto" />
+        </intent>
+    </queries>
+
+    <application
+        android:allowBackup="false"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="false"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 전체 화면 경보 — 잠금 화면 위, 화면 켜기 -->
+        <activity
+            android:name=".ui.AlarmActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:taskAffinity="${applicationId}.alarm"
+            android:turnScreenOn="true" />
+
+        <service
+            android:name=".service.GuardianService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+
+        <!-- 부팅 · 앱 업데이트 뒤 켜 둔 감시 되살리기. 두 동작은 시스템만 보내는 보호 방송이라 exported 여도 다른 앱이 부를 수 없고, 수신자는 그 밖의 동작을 버린다 -->
+        <receiver
+            android:name=".service.ResumeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".wear.WatchListenerService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <data android:scheme="wear" android:host="*" android:pathPrefix="/guardian/watch" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+                <data android:scheme="wear" android:host="*" android:pathPrefix="/guardian/watch" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

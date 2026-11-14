@@ -1,0 +1,46 @@
+# android/gradle/libs.versions.toml 과 같은 판을 쓴다(Gradle 9.5 · AGP 9.3.3 · Kotlin 2.2.10)
+[versions]
+agp = "9.3.3"
+kotlin = "2.2.10"
+junit = "4.13.2"
+# --- 앱 공통(PM, android/ 와 같은 판) ---
+coreKtx = "1.10.1"
+activityCompose = "1.10.1"
+composeBom = "2025.06.00"
+playServicesWearable = "19.0.0"
+# --- :car (Pleos, android/ 와 같은 판) ---
+pleosVehicle = "2.3.2"
+pleosNaviHelper = "3.0.5"
+pleosTextToSpeech = "3.3.1"
+# --- :phone 전용(app-phone 이 추가) ---
+# --- :watch 전용(app-wear 가 추가 — 예 healthServices 1.1.0 · Wear Compose) ---
+# Wear Compose 1.5.6 은 compose ui 1.8.2 를 쓴다 — 앱 공통 composeBom 2025.06.00(ui 1.8.x)과 맞춘 안정판(2026-10-30 Google Maven 확인)
+healthServices = "1.1.0"
+wearCompose = "1.5.6"
+# Ongoing Activity — 시계 화면 아이콘 · 「최근 앱」 상태 글자(사용자 승인 2026-11-08, 최신 안정판 · Apache 2.0 · core 1.6.0 이상)
+wearOngoing = "1.1.0"
+
+[libraries]
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+# --- 앱 공통(PM) ---
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
+# --- :car (Pleos) ---
+pleos-vehicle = { group = "ai.pleos.playground", name = "Vehicle", version.ref = "pleosVehicle" }
+pleos-navihelper = { group = "ai.pleos.playground", name = "NaviHelper", version.ref = "pleosNaviHelper" }
+pleos-texttospeech = { group = "ai.pleos.playground", name = "TextToSpeech", version.ref = "pleosTextToSpeech" }
+# --- :phone 전용(app-phone 이 추가) ---
+# --- :watch 전용(app-wear 가 추가) ---
+health-services-client = { group = "androidx.health", name = "health-services-client", version.ref = "healthServices" }
+wear-compose-material3 = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "wearCompose" }
+wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "wearCompose" }
+wear-ongoing = { group = "androidx.wear", name = "wear-ongoing", version.ref = "wearOngoing" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

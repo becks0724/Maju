@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 디버그 빌드에만 — local.properties guardian.relayBase 호스트로의 평문 HTTP 만 허용(설정 파일은 빌드가 생성, 계약 §2) -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- GPS 측정 화면(GpsProbeActivity) · 생체 기록 속도(BioProbeService)용 — release 에는 들어가지 않는다. API 31+ 는 정밀 위치를 대략 위치와 함께 요청해야 한다 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- 생체 기록 포그라운드 서비스의 location 유형(API 34+). health 유형 · WAKE_LOCK 은 main 매니페스트에 있다 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <!-- 삼성 PPG 연속(Sensor SDK) — Sensor SDK 는 debug 빌드에만 들어가므로 권한도 여기에만 둔다(합동 점검 C-8).
+         release 에 SDK 를 켜는 날(MONITOR_READY 해제와 같은 사용자 결정) release 구성과 함께 main 매니페스트로 되돌린다 -->
+    <uses-permission android:name="com.samsung.android.hardware.sensormanager.permission.READ_ADDITIONAL_HEALTH_DATA" />
+
+    <application android:networkSecurityConfig="@xml/network_security_config_debug">
+        <!-- debug 전용 GPS 실측 화면 — 런처에 없고 adb am start 로만 연다. 걷다가 밀어서 닫히지 않게 밀어 닫기를 끈 테마를 쓴다 -->
+        <activity
+            android:name="com.example.guardian.watch.probe.GpsProbeActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Guardian.Alert" />
+
+        <!-- debug 전용 생체 원자료 기록 화면 — 런처에 「생체 기록」으로 보인다(계획 11-07). 화면을 나가도 서비스가 끝 버튼까지 기록한다 -->
+        <activity
+            android:name="com.example.guardian.watch.probe.BioProbeActivity"
+            android:exported="true"
+            android:label="@string/bio_probe_label">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 생체 기록 포그라운드 서비스 — health(심박 · PPG · 가속도) + location(속도) 유형, 경보 · 판정 · 중계를 부르지 않는다 -->
+        <service
+            android:name="com.example.guardian.watch.probe.BioProbeService"
+            android:exported="false"
+            android:foregroundServiceType="health|location" />
+    </application>
+</manifest>

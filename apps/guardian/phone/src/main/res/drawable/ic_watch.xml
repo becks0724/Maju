@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 앱 막대 아이콘 네모 안 손목시계 선 아이콘 — 24 격자 · 선 2 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <path android:strokeColor="#FF000000" android:strokeWidth="2" android:pathData="M6,6h12v12h-12z" />
+    <path android:strokeColor="#FF000000" android:strokeWidth="2" android:pathData="M9,6V2h6v4M9,18v4h6v-4" />
+    <path android:strokeColor="#FF000000" android:strokeWidth="2" android:strokeLineCap="round" android:pathData="M12,9v3l2,1.5" />
+</vector>

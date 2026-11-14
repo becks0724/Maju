@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 운전자 무응답 확인(가칭) Pleos 차 앱 — 상태 기계 주인 · 차량 상태 · 차 안 경보 · 짝짓기 -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- android.car 속성 — 차속(CAR_SPEED, dangerous · 실행 중 요청, 위치 권한 그룹 대화상자가 뜬다), 기어 · 주차 브레이크(CAR_POWERTRAIN), 차종(CAR_INFO) -->
+    <uses-permission android:name="android.car.permission.CAR_SPEED" />
+    <uses-permission android:name="android.car.permission.CAR_POWERTRAIN" />
+    <uses-permission android:name="android.car.permission.CAR_INFO" />
+
+    <!-- Pleos Vehicle — 브레이크 페달(CAR_DRIVE) · 에어백 전개(CAR_SAFETY) · 착석(CAR_SEATS) -->
+    <uses-permission android:name="pleos.car.permission.CAR_DRIVE" />
+    <uses-permission android:name="pleos.car.permission.CAR_SAFETY" />
+    <uses-permission android:name="pleos.car.permission.CAR_SEATS" />
+    <!-- 앰비언트 조명 권한(CAR_LIGHTS · CONTROL_CAR_LIGHTS)은 선언하지 않는다 — AmbientPolicy.ENABLED 가 false 상수라 호출 0(PM 결정 2026-11-08).
+         법률 검토 · Vehicle Control 승인 뒤 켤 때 함께 다시 넣는다 -->
+
+    <!-- NaviHelper — 현재 위치(NAVI_ROUTE) · 응급실 검색 화면(NAVI_CUSTOM_MAP) -->
+    <uses-permission android:name="pleos.car.permission.NAVI_ROUTE" />
+    <uses-permission android:name="pleos.car.permission.NAVI_CUSTOM_MAP" />
+
+    <!-- 차 안 음성 — Pleos TextToSpeech ON_DEVICE -->
+    <uses-permission android:name="pleos.car.permission.TTS_SERVICE" />
+
+    <!-- 감시 중 화면이 가려져도 sync · 판정이 멈추지 않게 하는 specialUse 포그라운드 서비스 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- 부팅 뒤 켜져 있던 감시 서비스를 다시 띄운다(ResumeReceiver). AAOS 사용자 10 에서의 전달은 [미검증] -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <queries>
+        <package android:name="ai.pleos.playground.service.navi" />
+        <package android:name="ai.pleos.playground.service.vehicle" />
+    </queries>
+
+    <application
+        android:allowBackup="false"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.Material.NoActionBar">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- 주행 중에도 경보 한 줄을 보이는 화면이라 주행 최적화(DO) 화면으로 선언한다. 주행 중 버튼 0 · 정지 화면만 버튼 하나(G5) -->
+            <meta-data android:name="distractionOptimized" android:value="true" />
+        </activity>
+
+        <service
+            android:name=".GuardianService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="운전자 무응답 확인 — 워치 판정과 차량 상태를 2초마다 중계와 주고받아 응답 확인이 필요할 때 차 화면 · 음성으로 알린다" />
+        </service>
+
+        <!-- 부팅 · 앱 업데이트 뒤 켜져 있던(휴대폰 켬 · 짝 있음) 감시를 되살린다 — 시스템 보호 방송 두 개만 받는다(CarResume) -->
+        <receiver
+            android:name=".ResumeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

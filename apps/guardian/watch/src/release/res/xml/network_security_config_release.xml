@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- release 전용 — 평문 허용 호스트 없음. debug 의 생성 파일(사설 IP 허용)은 release 에 들어가지 않는다 -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>

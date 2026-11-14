@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 디버그 빌드에만 — 생체 기록 화면의 런처 이름(제품 기능 아님) -->
+<resources>
+    <string name="bio_probe_label">생체 기록</string>
+</resources>

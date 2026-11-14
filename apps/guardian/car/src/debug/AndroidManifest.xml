@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 디버그 빌드에만 병합 — 베타 중계 평문 허용(guardian.carRelayBase 호스트 한정, 기본 10.0.2.2 · 리소스는 빌드가 생성) -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:networkSecurityConfig="@xml/network_security_config_debug" />
+</manifest>

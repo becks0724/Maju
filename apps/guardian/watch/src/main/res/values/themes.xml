@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 창 테마 — 늘 검은 바탕(spec §7-2 watchBg). 경보 화면은 밀어서 닫기를 끈다(닫는 동작은 응답이 아니고 경보 화면만 사라지게 하지 않으려고) -->
+<resources>
+    <style name="Theme.Guardian" parent="@android:style/Theme.DeviceDefault">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+
+    <style name="Theme.Guardian.Alert">
+        <item name="android:windowSwipeToDismiss">false</item>
+    </style>
+</resources>

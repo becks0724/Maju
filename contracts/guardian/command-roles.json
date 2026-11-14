@@ -1,0 +1,26 @@
+{
+  "about": "지시 허용 표(계약 §4.6, 합동 점검 D-1) — 보낸 역할마다 type 별로 받을 수 있는 쪽(to 생략 시 기본 대상까지 풀어서 본다). 표 밖이면 그 sync 전체가 400. testOnly 의 type 은 test:true 만 받는다. 중계(relay.py COMMAND_ROLES) · 통합 FakeRelay · :shared 시험이 이 파일과 대조한다.",
+  "allow": {
+    "CAR": {
+      "ALERT_START": ["WATCH", "PHONE"],
+      "ALERT_STOP": ["ALL", "WATCH", "PHONE"],
+      "SHOW": ["PHONE"],
+      "OPEN_119_COMPOSE": ["PHONE"],
+      "SEND_GUARDIAN_SMS": ["PHONE"],
+      "TEST_REQUEST": ["PHONE"]
+    },
+    "PHONE": {
+      "ALERT_START": ["WATCH"],
+      "ALERT_STOP": ["ALL", "WATCH", "CAR"],
+      "SPEAK": ["CAR"],
+      "SHOW": ["CAR"],
+      "AMBIENT": ["CAR"],
+      "OPEN_SEARCH": ["CAR"],
+      "FLOW_SNAPSHOT": ["CAR"],
+      "TEST_SCENARIO": ["WATCH"],
+      "TEST_SCENARIO_STOP": ["WATCH"]
+    },
+    "WATCH": {}
+  },
+  "testOnly": ["TEST_REQUEST", "TEST_SCENARIO", "TEST_SCENARIO_STOP"]
+}

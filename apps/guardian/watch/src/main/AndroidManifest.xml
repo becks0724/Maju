@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 워치 앱 매니페스트 — 감시 포그라운드 서비스(health), 센서 · 알림 권한, 독립 실행(휴대폰 없이 중계 직접 경로) -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-feature android:name="android.hardware.type.watch" />
+
+    <!-- 중계 HTTP · 감시 동안 Wi-Fi 요청(Wear OS 고대역 네트워크) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+
+    <!-- 감시 실행 유지 — 포그라운드 서비스(type health) · 화면 꺼짐 중 판정 · sync -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 켜 둔 감시를 재부팅 뒤 다시 켠다(ResumeReceiver). 앱 업데이트(MY_PACKAGE_REPLACED)는 권한이 필요 없다 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- 경보 — 진동 · 알림 · 경보 화면(전체 화면 인텐트의 Wear OS 동작은 [미검증]) -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
+    <!-- 센서 — API 35 이하는 BODY_SENSORS, 36 이상은 심박 세분 권한(S0 권한 표). 삼성 PPG 권한은 debug 매니페스트에만(C-8) -->
+    <uses-permission android:name="android.permission.BODY_SENSORS" android:maxSdkVersion="35" />
+    <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
+    <uses-permission android:name="android.permission.health.READ_HEALTH_DATA_IN_BACKGROUND" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+
+    <!-- 토큰 · 동의 기록이 다른 기기로 복원되지 않게 백업을 끈다 -->
+    <application
+        android:allowBackup="false"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Guardian">
+
+        <!-- 휴대폰 앱 없이도 중계 직접 경로(/v1/watch/sync)로 동작한다(설계 §12) -->
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.AlertActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:showWhenLocked="true"
+            android:theme="@style/Theme.Guardian.Alert"
+            android:turnScreenOn="true" />
+
+        <service
+            android:name=".service.MonitorService"
+            android:exported="false"
+            android:foregroundServiceType="health" />
+
+        <!-- 동의 철회 때 중계에서 못 지운 워치 연결을 네트워크가 돌아오면 다시 끝낸다(PairEnd · 계약 §3.2). 시스템 JobScheduler 만 묶을 수 있다 -->
+        <service
+            android:name=".service.PairEndJob"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <!-- 부팅 · 앱 업데이트 뒤 저장된 켜짐이면 감시를 다시 켠다(ResumeDecision). 두 동작 모두 시스템만 보내는 보호 방송이라
+             exported 여도 다른 앱이 이 동작으로 부를 수 없고, 수신자는 이 두 동작 밖은 버린다 -->
+        <receiver
+            android:name=".service.ResumeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

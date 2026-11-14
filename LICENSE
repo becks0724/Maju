@@ -1,0 +1,12 @@
+Copyright (c) 2026 Maju(마주) 출품 팀. All rights reserved.
+
+이 저장소의 소스 코드와 문서는 현대자동차그룹 차량용 앱 개발 공모전(Pleos Connect · App Market)
+심사를 위해 공개한 것입니다. 심사 목적의 열람 · 빌드 · 실행 말고는, 저작권자의 사전 서면 동의 없이
+복제 · 배포 · 수정 · 상업적 이용을 허락하지 않습니다.
+
+제3자 구성요소(Pleos Connect SDK, AndroidX, Kotlin, Health Services 등)는 각자의 라이선스를 따릅니다.
+Samsung Health Sensor SDK 는 이 저장소와 제출 APK 에 들어 있지 않습니다.
+
+This repository is published for the judging of the Hyundai Motor Group in-vehicle app contest.
+No license is granted for copying, redistribution, modification or commercial use without prior
+written permission. Third-party components remain under their own licenses.

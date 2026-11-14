@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- debug 전용 — 빌드 때 만든 network security config(guardian.relayBase 호스트만 평문 허용)를 붙인다. release 에는 없다 -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:networkSecurityConfig="@xml/guardian_debug_network" />
+</manifest>

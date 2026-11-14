@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 런처 이름 — 출품 이름 Maju(마주, 2026-11-09 — 11-08 Adsum 에서 바꿈). 화면 · 문자의 기능 이름은 :shared Phrase.APP_NAME(「운전자 무응답 확인」) 그대로 -->
+<resources>
+    <string name="app_name">Maju</string>
+</resources>
